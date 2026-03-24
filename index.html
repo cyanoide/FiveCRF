@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIVE Carrefour</title>
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%E2%9A%BD</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-futbol"></i>
+                <span>FIVE Carrefour</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-target="replay">
+                    <i class="fa-solid fa-tv"></i>
+                    <span>Replays</span>
+                </a>
+                <a href="#" class="nav-link" data-target="joueurs">
+                    <i class="fa-solid fa-shirt"></i>
+                    <span>Joueurs</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">CM</div>
+                    <div class="user-info">
+                        <span class="name">Constantin M.</span>
+                        <span class="role">Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="toggle-sidebar-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="header-right">
+                    <button id="theme-toggle" class="icon-btn" title="Changer de theme">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+
+                <!-- REPLAYS PAGE -->
+                <section id="replay" class="page-view active">
+                    <div class="page-header">
+                        <h1>Replays</h1>
+                        <div class="season-selector" id="replay-season-selector">
+                            <button class="season-btn active" data-year="all">Tout</button>
+                            <button class="season-btn" data-year="2025">2025</button>
+                            <button class="season-btn" data-year="2026">2026</button>
+                        </div>
+                    </div>
+                    <div class="replay-container" id="replay-list"></div>
+                </section>
+
+                <!-- JOUEURS PAGE -->
+                <section id="joueurs" class="page-view">
+                    <div class="page-header">
+                        <h1>Joueurs</h1>
+                        <div class="season-selector" id="joueurs-season-selector">
+                            <button class="season-btn active" data-year="all">Tout</button>
+                            <button class="season-btn" data-year="2025">2025</button>
+                            <button class="season-btn" data-year="2026">2026</button>
+                        </div>
+                    </div>
+                    <div class="joueurs-layout">
+                        <div class="joueurs-list-panel">
+                            <div class="joueurs-list-sticky">
+                                <div class="joueurs-list-header">
+                                    <h3>Classement</h3>
+                                    <span class="joueurs-count" id="joueurs-count">0</span>
+                                </div>
+                                <div class="sort-controls" id="sort-controls">
+                                    <button class="sort-btn active" data-sort="goals">Buts</button>
+                                    <button class="sort-btn" data-sort="matches">Matchs</button>
+                                    <button class="sort-btn" data-sort="ratio">Buts/M</button>
+                                    <button class="sort-btn" data-sort="ga">G+A</button>
+                                </div>
+                            </div>
+                            <div class="joueurs-list-scroll" id="joueurs-list"></div>
+                        </div>
+                        <div class="joueur-detail-panel" id="joueur-detail">
+                            <div class="joueur-detail-empty">
+                                <i class="fa-solid fa-shirt"></i>
+                                <span>Selectionne un joueur</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/replays_data.js?v=3.0"></script>
+    <script src="js/history_data.js?v=3.0"></script>
+    <script src="js/app.js?v=3.0"></script>
+</body>
+
+</html>

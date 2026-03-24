@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Quality FIVE</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Quality FIVE</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-target="dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="#" class="nav-link" data-target="joueurs">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Joueurs</span>
+                </a>
+                <a href="#" class="nav-link" data-target="comparateur">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <span>Comparateur</span>
+                </a>
+                <a href="#" class="nav-link" data-target="statistiques">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Statistiques globales</span>
+                </a>
+                <a href="#" class="nav-link" data-target="historique">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Historique</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">AD</div>
+                    <div class="user-info">
+                        <span class="name">Admin User</span>
+                        <span class="role">Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-bar">
+                <div class="toggle-sidebar-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <div class="header-right">
+                    <button id="theme-toggle" class="icon-btn" title="Mode sombre">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button class="icon-btn notification-btn">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content Views -->
+            <div class="content-wrapper">
+
+                <!-- Dashboard View -->
+                <section id="dashboard" class="page-view active">
+                    <div class="page-header">
+                        <h1>Tableau de bord</h1>
+                        <p>Vue d'ensemble des performances</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Joueurs</h3>
+                                <p class="value">1,248</p>
+                                <p class="trend positive">+12% <i class="fa-solid fa-arrow-up"></i></p>
+                            </div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-futbol"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Matchs Joués</h3>
+                                <p class="value">856</p>
+                                <p class="trend positive">+5% <i class="fa-solid fa-arrow-up"></i></p>
+                            </div>
+                        </div>
+                        <div class="stat-card purple">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Tournois</h3>
+                                <p class="value">24</p>
+                                <p class="trend neutral">0% <i class="fa-solid fa-minus"></i></p>
+                            </div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="icon-wrapper">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Note Moyenne</h3>
+                                <p class="value">4.8/5</p>
+                                <p class="trend positive">+0.2 <i class="fa-solid fa-arrow-up"></i></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-section">
+                        <div class="chart-card large">
+                            <div class="card-header">
+                                <h3>Activité Récente</h3>
+                                <select class="time-select">
+                                    <option>Cette semaine</option>
+                                    <option>Ce mois</option>
+                                </select>
+                            </div>
+                            <div class="chart-placeholder">
+                                <!-- Simulation of a chart with CSS -->
+                                <div class="bar-chart">
+                                    <div class="bar" style="height: 40%;" title="Lun"></div>
+                                    <div class="bar" style="height: 70%;" title="Mar"></div>
+                                    <div class="bar" style="height: 55%;" title="Mer"></div>
+                                    <div class="bar" style="height: 85%;" title="Jeu"></div>
+                                    <div class="bar" style="height: 60%;" title="Ven"></div>
+                                    <div class="bar" style="height: 90%;" title="Sam"></div>
+                                    <div class="bar" style="height: 75%;" title="Dim"></div>
+                                </div>
+                                <div class="chart-labels">
+                                    <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3>Répartition par Postes</h3>
+                            </div>
+                            <div class="donut-chart-placeholder">
+                                <div class="donut-ring">
+                                    <div class="donut-segment" style="--deg: 120deg; --color: var(--primary);"></div>
+                                    <div class="donut-segment" style="--deg: 240deg; --color: var(--success);"></div>
+                                    <div class="donut-center">
+                                        <span>Total</span>
+                                    </div>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item"><span class="dot blue"></span> Attaquants</div>
+                                    <div class="legend-item"><span class="dot green"></span> Défenseurs</div>
+                                    <div class="legend-item"><span class="dot orange"></span> Gardiens</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Joueurs Master-Detail View -->
+                <section id="joueurs" class="page-view">
+                    <div class="player-master-detail-container">
+
+                        <!-- Left Column: Player List -->
+                        <div class="player-list-sidebar">
+                            <div class="list-header">
+                                <h3>Joueurs (12)</h3>
+                            </div>
+                            <div class="player-list-items">
+                                <!-- Generated from FIVE.xlsx -->
+                                <div class="player-list-item active" data-name="Abdel Karim"
+                                    data-fname="Abdel_Karim.png" data-matchs="10" data-wins="6" data-draws="0.7"
+                                    data-losses="2" data-goals="20" data-assists="2" data-note="21">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Abdel_Karim.png'), url('https://ui-avatars.com/api/?name=Abdel+Karim&background=2c3e50&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Abdel Karim</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Constantin" data-fname="Constantin.png"
+                                    data-matchs="15" data-wins="8" data-draws="0.6" data-losses="3" data-goals="25"
+                                    data-assists="1.6" data-note="17">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Constantin.png'), url('https://ui-avatars.com/api/?name=Constantin&background=f1c40f&color=333'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Constantin</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Enos" data-fname="Enos.png" data-matchs="6"
+                                    data-wins="2" data-draws="0.4" data-losses="1" data-goals="16" data-assists="2.6"
+                                    data-note="4">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Enos.png'), url('https://ui-avatars.com/api/?name=Enos&background=e67e22&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Enos</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Jesus" data-fname="Jesus.png" data-matchs="8"
+                                    data-wins="2" data-draws="0.3" data-losses="1" data-goals="8" data-assists="1"
+                                    data-note="8">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Jesus.png'), url('https://ui-avatars.com/api/?name=Jesus&background=2ecc71&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Jesus</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Abdel Rafik" data-fname="Abdel_Rafik.png"
+                                    data-matchs="1" data-wins="1" data-draws="1" data-losses="0" data-goals="1"
+                                    data-assists="0" data-note="1">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Abdel_Rafik.png'), url('https://ui-avatars.com/api/?name=Abdel+Rafik&background=9b59b6&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Abdel Rafik</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Anasse" data-fname="Anasse.png" data-matchs="8"
+                                    data-wins="4" data-draws="0.6" data-losses="2" data-goals="10" data-assists="1.2"
+                                    data-note="2">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Anasse.png'), url('https://ui-avatars.com/api/?name=Anasse&background=34495e&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Anasse</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Nabil" data-fname="Nabil.png" data-matchs="1"
+                                    data-wins="0" data-draws="0" data-losses="0" data-goals="3" data-assists="0"
+                                    data-note="0">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Nabil.png'), url('https://ui-avatars.com/api/?name=Nabil&background=e74c3c&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Nabil</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Dorian" data-fname="Dorian.png" data-matchs="1"
+                                    data-wins="0" data-draws="0" data-losses="0" data-goals="1" data-assists="0"
+                                    data-note="0">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Dorian.png'), url('https://ui-avatars.com/api/?name=Dorian&background=1abc9c&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Dorian</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Sidoine" data-fname="Sidoine.png"
+                                    data-matchs="0" data-wins="-" data-draws="-" data-losses="0" data-goals="0"
+                                    data-assists="0" data-note="0">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Sidoine.png'), url('https://ui-avatars.com/api/?name=Sidoine&background=95a5a6&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Sidoine</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Luka" data-fname="Luka.png" data-matchs="1"
+                                    data-wins="0" data-draws="0" data-losses="0" data-goals="1" data-assists="0"
+                                    data-note="0">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Luka.png'), url('https://ui-avatars.com/api/?name=Luka&background=e74c3c&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Luka</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Christian" data-fname="Christian.png"
+                                    data-matchs="0" data-wins="-" data-draws="-" data-losses="0" data-goals="0"
+                                    data-assists="0" data-note="0">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Christian.png'), url('https://ui-avatars.com/api/?name=Christian&background=e67e22&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Christian</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Mahamat" data-fname="Mahamat.png"
+                                    data-matchs="2" data-wins="1" data-draws="0.5" data-losses="0" data-goals="5"
+                                    data-assists="2.5" data-note="3">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Mahamat.png'), url('https://ui-avatars.com/api/?name=Mahamat&background=9b59b6&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Mahamat</span></div>
+                                </div>
+                                <div class="player-list-item" data-name="Nassim" data-fname="Nassim.png" data-matchs="1"
+                                    data-wins="0" data-draws="0.5" data-losses="1" data-goals="2" data-assists="2"
+                                    data-note="1">
+                                    <div class="avatar-sm"
+                                        style="background-image: url('./Nassim.png'), url('https://ui-avatars.com/api/?name=Nassim&background=34495e&color=fff'); background-size: cover;">
+                                    </div>
+                                    <div class="player-list-info"><span class="name">Nassim</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Player Detail (Permanent) -->
+                        <div class="player-detail-panel">
+                            <div class="page-header detail-header">
+                                <h1 id="detail-title-name">Abdel Karim</h1>
+                            </div>
+
+                            <div class="player-profile-container">
+                                <!-- FUT Card -->
+                                <div class="fut-card-wrapper">
+                                    <div class="fut-card gold">
+                                        <div class="fut-top">
+                                            <div class="fut-rating" id="d-rating">92</div>
+                                            <div class="fut-position" id="d-pos">DF</div>
+                                            <div class="fut-nation"><img
+                                                    src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Tunisia.png"
+                                                    alt="Nation"></div>
+                                            <div class="fut-club"><i class="fa-solid fa-shield-cat"></i></div>
+                                        </div>
+                                        <div class="fut-image">
+                                            <!-- Image loads from local root as dynamic source -->
+                                            <img id="d-card-img" src="./Abdel_Karim.png"
+                                                onerror="this.src='https://ui-avatars.com/api/?name=Abdel+Karim&background=2c3e50&color=fff&size=200'"
+                                                alt="Player Face">
+                                        </div>
+                                        <div class="fut-info">
+                                            <div class="fut-name" id="d-card-name">ABDEL KARIM</div>
+                                            <div class="fut-stats">
+                                                <div><span id="d-pac">93</span> PAC</div>
+                                                <div><span id="d-dri">92</span> DRI</div>
+                                                <div><span id="d-sho">90</span> SHO</div>
+                                                <div><span id="d-def">55</span> DEF</div>
+                                                <div><span id="d-pas">92</span> PAS</div>
+                                                <div><span id="d-phy">81</span> PHY</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Main Stats Grid -->
+                                <div class="detail-stats-grid">
+                                    <div class="detail-stat-box">
+                                        <span class="label">MATCHS</span>
+                                        <span class="value" id="d-stat-matchs">10</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">VICTOIRES</span>
+                                        <span class="value" id="d-stat-wins">6</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">NULS</span>
+                                        <span class="value" id="d-stat-draws">0.7</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">DÉFAITES</span>
+                                        <span class="value" id="d-stat-losses">2</span>
+                                    </div>
+
+                                    <div class="detail-stat-box">
+                                        <span class="label">RATIO DE VICTOIRES</span>
+                                        <span class="value" id="d-stat-ratio-win">60%</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">TEMPS MOYEN PAR BUT</span>
+                                        <span class="value" id="d-stat-tmb">-</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">BUTS</span>
+                                        <span class="value" id="d-stat-goals">20</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">PASSES DÉCISIVES</span>
+                                        <span class="value" id="d-stat-assists">2</span>
+                                    </div>
+
+                                    <div class="detail-stat-box">
+                                        <span class="label">RATIO BUTS / MATCHS</span>
+                                        <span class="value" id="d-stat-ratio-goals">2.0</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">RATIO PASSES DÉ. / MATCHS</span>
+                                        <span class="value" id="d-stat-ratio-assists">0.2</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">TITRES MEILLEUR BUTEUR</span>
+                                        <span class="value" id="d-stat-best-scorer">-</span>
+                                    </div>
+                                    <div class="detail-stat-box">
+                                        <span class="label">TITRES MEILLEUR PASSEUR DÉ.</span>
+                                        <span class="value" id="d-stat-best-passer">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Performance Chart -->
+                            <div class="performance-chart-section">
+                                <div class="chart-header">
+                                    <h3>Buts / Passes décisives par match</h3>
+                                    <div class="chart-controls">
+                                        <input type="checkbox" id="show-assists" checked>
+                                        <label for="show-assists">Afficher les passes décisives (rouge)</label>
+                                    </div>
+                                </div>
+                                <div class="canvas-container">
+                                    <canvas id="playerPerformanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Comparateur View -->
+                <section id="comparateur" class="page-view">
+                    <div class="page-header">
+                        <h1>Comparateur de Joueurs</h1>
+                    </div>
+                    <div class="comparison-container">
+                        <div class="comparison-card">
+                            <div class="player-select">
+                                <div class="avatar-lg">P1</div>
+                                <select>
+                                    <option>Karim Benza</option>
+                                    <option>Kylian Mbippe</option>
+                                </select>
+                            </div>
+                            <div class="player-stats">
+                                <div class="stat-row">
+                                    <span>Vitesse</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 85%"></div>
+                                    </div>
+                                    <span>85</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span>Tir</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 92%"></div>
+                                    </div>
+                                    <span>92</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span>Passe</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 78%"></div>
+                                    </div>
+                                    <span>78</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vs-badge">VS</div>
+
+                        <div class="comparison-card">
+                            <div class="player-select">
+                                <div class="avatar-lg">P2</div>
+                                <select>
+                                    <option selected>Kylian Mbippe</option>
+                                    <option>Karim Benza</option>
+                                </select>
+                            </div>
+                            <div class="player-stats">
+                                <div class="stat-row">
+                                    <span>Vitesse</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 98%"></div>
+                                    </div>
+                                    <span>98</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span>Tir</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 88%"></div>
+                                    </div>
+                                    <span>88</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span>Passe</span>
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: 75%"></div>
+                                    </div>
+                                    <span>75</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistiques View -->
+                <section id="statistiques" class="page-view">
+                    <div class="page-header">
+                        <h1>Statistiques Globales</h1>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="chart-card full-width">
+                            <div class="card-header">
+                                <h3>Evolution des buts par saison</h3>
+                            </div>
+                            <!-- Mock content for big chart -->
+                            <div
+                                style="height: 300px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px;">
+                                <div style="width: 10%; height: 40%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                                <div style="width: 10%; height: 60%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                                <div style="width: 10%; height: 50%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                                <div style="width: 10%; height: 80%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                                <div style="width: 10%; height: 70%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                                <div style="width: 10%; height: 90%; background: var(--primary); border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Historique View -->
+                <section id="historique" class="page-view">
+                    <div class="page-header">
+                        <h1>Historique des événements</h1>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-icon green"><i class="fa-solid fa-check"></i></div>
+                            <div class="timeline-content">
+                                <h4>Match terminé</h4>
+                                <p>Victoire de l'équipe A (5-3) contre l'équipe B</p>
+                                <span class="time">Il y a 2h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon blue"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="timeline-content">
+                                <h4>Nouveau joueur inscrit</h4>
+                                <p>Bienvenue à Antoine G.</p>
+                                <span class="time">Il y a 5h</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon purple"><i class="fa-solid fa-trophy"></i></div>
+                            <div class="timeline-content">
+                                <h4>Début du tournoi d'été</h4>
+                                <p>Les inscriptions sont closes.</p>
+                                <span class="time">Hier</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
