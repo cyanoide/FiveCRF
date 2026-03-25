@@ -177,6 +177,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =============================================
+    // NAVIGATION DEPUIS UN REPLAY → FICHE JOUEUR
+    // =============================================
+    function navigateToPlayer(playerName) {
+        // Trouver le nom exact dans history_data
+        const historyName = Object.keys(window.playerHistory || {}).find(k => {
+            const kL = k.toLowerCase().trim();
+            const pL = playerName.toLowerCase().trim();
+            return kL === pL ||
+                   kL.startsWith(pL.split(' ')[0]) ||
+                   pL.startsWith(kL.split(' ')[0]);
+        });
+        if (!historyName) return;
+
+        // Basculer sur l'onglet Joueurs
+        navLinks.forEach(l => l.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        document.querySelector('[data-target="joueurs"]')?.classList.add('active');
+        document.getElementById('joueurs')?.classList.add('active');
+        if (window.innerWidth <= 768) sidebar.classList.remove('open');
+
+        // Forcer la saison "Tout" pour être sûr d'avoir des données
+        currentSeason.joueurs = 'all';
+        document.querySelectorAll('#joueurs-season-selector .season-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.year === 'all');
+        });
+
+        // Sélectionner le joueur et afficher sa fiche
+        selectedPlayer = historyName;
+        buildJoueursList();
+        showJoueurDetail(historyName);
+
+        // Scroll vers la fiche sur mobile
+        setTimeout(() => {
+            document.getElementById('joueur-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+
+    // =============================================
+    // NAVIGATION DEPUIS UNE DATE → REPLAY
+    // =============================================
+    function navigateToReplay(shortDate) {
+        const year = dateToYear(shortDate);
+        if (!year) return;
+        const fullDate = `${shortDate}/${year}`;
+
+        // Basculer sur l'onglet Replays
+        navLinks.forEach(l => l.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        document.querySelector('[data-target="replays"]')?.classList.add('active');
+        document.getElementById('replays')?.classList.add('active');
+        if (window.innerWidth <= 768) sidebar.classList.remove('open');
+
+        // Ne reconstruire que si l'item n'est pas dans le DOM actuel
+        // (filtre saison incompatible). Évite le flash blanc causé par innerHTML = ''.
+        const alreadyInDom = document.querySelector(`.replay-item[data-date="${fullDate}"]`);
+        if (!alreadyInDom) {
+            currentSeason.replay = 'all';
+            document.querySelectorAll('#replay-season-selector .season-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.year === 'all');
+            });
+            buildReplayList();
+        }
+
+        // Ouvrir et scroller après le prochain cycle de rendu
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const item = document.querySelector(`.replay-item[data-date="${fullDate}"]`);
+            if (item) {
+                item.classList.add('active');
+                item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }));
+    }
+
+    // =============================================
     // REPLAYS
     // =============================================
     function buildReplayList() {
@@ -195,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         matches.forEach(match => {
             const item = document.createElement('div');
             item.className = 'replay-item';
+            item.dataset.date = match.date;
 
             const scoreA = parseInt(match.scoreA);
             const scoreB = parseInt(match.scoreB);
@@ -207,7 +282,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const yearDisplay = dateParts[2];
 
             const formatPlayers = (list) =>
-                (list || []).map(p => `<div class="player-line">${p}</div>`).join('');
+                (list || []).map(p => {
+                    const hasHistory = Object.keys(window.playerHistory || {}).some(k => {
+                        const kL = k.toLowerCase().trim();
+                        const pL = p.toLowerCase().trim();
+                        return kL === pL || kL.startsWith(pL.split(' ')[0]) || pL.startsWith(kL.split(' ')[0]);
+                    });
+                    return hasHistory
+                        ? `<div class="player-line player-link" data-player="${p}">${p}</div>`
+                        : `<div class="player-line">${p}</div>`;
+                }).join('');
 
             // Visual timeline
             let visualHtml = '';
@@ -315,6 +399,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
+            // Liens joueurs → fiche
+            item.querySelectorAll('.player-link').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navigateToPlayer(el.dataset.player);
+                });
+            });
+
             container.appendChild(item);
         });
     }
@@ -343,11 +435,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalAssists = filtered.reduce((s, h) => s + (h.assists || 0), 0);
             const matches = filtered.length;
 
+            const wins   = filtered.filter(h => getMatchResult(name, h.date) === 'win').length;
+            const draws  = filtered.filter(h => getMatchResult(name, h.date) === 'draw').length;
+            const losses = filtered.filter(h => getMatchResult(name, h.date) === 'loss').length;
+            const formRatio = matches > 0 ? Math.round((wins + draws * 0.5) / matches * 100) : 0;
+
             stats[name] = {
-                matches: matches,
+                matches,
                 goals: totalGoals,
                 assists: totalAssists,
-                ratio: matches > 0 ? totalGoals / matches : 0
+                ratio: matches > 0 ? totalGoals / matches : 0,
+                wins,
+                draws,
+                losses,
+                formRatio
             };
         });
 
@@ -359,6 +460,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const history = window.playerHistory[name];
         if (year === 'all') return history;
         return history.filter(h => dateToYear(h.date) === year);
+    }
+
+    // =============================================
+    // MATCH RESULT — croisement history x replays
+    // =============================================
+    function getMatchResult(name, shortDate) {
+        if (!window.replays) return null;
+        const year = dateToYear(shortDate);
+        if (!year) return null;
+        const fullDate = `${shortDate}/${year}`;
+        const match = window.replays.find(m => m.date === fullDate);
+        if (!match) return null;
+
+        const nameL = name.toLowerCase().trim();
+        function inTeam(team) {
+            return (team || []).some(p => {
+                const pL = p.toLowerCase().trim();
+                return pL === nameL ||
+                       pL.startsWith(nameL.split(' ')[0]) ||
+                       nameL.startsWith(pL.split(' ')[0]);
+            });
+        }
+        const inA = inTeam(match.teamA);
+        const inB = inTeam(match.teamB);
+        if (!inA && !inB) return null;
+
+        const scoreA = parseInt(match.scoreA);
+        const scoreB = parseInt(match.scoreB);
+        if (scoreA === scoreB) return 'draw';
+        return (inA ? scoreA > scoreB : scoreB > scoreA) ? 'win' : 'loss';
     }
 
     function sortPlayers(entries) {
@@ -373,6 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return entries.sort((a, b) =>
                     (b[1].goals + b[1].assists) - (a[1].goals + a[1].assists) || b[1].goals - a[1].goals
                 );
+            case 'formRatio':
+                return entries.sort((a, b) => b[1].formRatio - a[1].formRatio || b[1].wins - a[1].wins);
             default:
                 return entries;
         }
@@ -388,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let sorted = Object.entries(stats);
         sorted = sortPlayers(sorted);
 
-        if (countEl) countEl.textContent = sorted.length;
+        if (countEl) countEl.textContent = `${sorted.length} joueurs`;
         list.innerHTML = '';
 
         if (sorted.length === 0) {
@@ -398,11 +531,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const badgeValue = (st) => {
             switch (currentSort) {
-                case 'goals': return `${st.goals}`;
-                case 'matches': return `${st.matches}`;
-                case 'ratio': return st.ratio.toFixed(1);
-                case 'ga': return `${st.goals + st.assists}`;
-                default: return `${st.goals}`;
+                case 'goals':     return `${st.goals}`;
+                case 'matches':   return `${st.matches}`;
+                case 'ratio':     return st.ratio.toFixed(1);
+                case 'ga':        return `${st.goals + st.assists}`;
+                case 'formRatio': return `${st.formRatio}%`;
+                default:          return `${st.goals}`;
             }
         };
 
@@ -456,12 +590,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const history = getFilteredHistory(name, year);
 
-        // Build history rows — most recent first
+        // Form strip — 5 derniers matchs
+        const last5 = history.slice(-5);
+        const formDotsHtml = last5.map(h => {
+            const r = getMatchResult(name, h.date);
+            if (!r) return '';
+            const cls  = r === 'win' ? 'win' : r === 'draw' ? 'draw' : 'loss';
+            const icon = r === 'win' ? 'fa-check' : r === 'draw' ? 'fa-minus' : 'fa-xmark';
+            return `<div class="form-dot ${cls}" title="${h.date}"><i class="fa-solid ${icon}"></i></div>`;
+        }).filter(Boolean).join('');
+
+        // Build history rows — most recent first, with V/N/D badge
         let historyRows = '';
         [...history].reverse().forEach(h => {
+            const r = getMatchResult(name, h.date);
+            const badge = r
+                ? `<span class="result-badge ${r === 'win' ? 'win' : r === 'draw' ? 'draw' : 'loss'}">${r === 'win' ? 'V' : r === 'draw' ? 'N' : 'D'}</span>`
+                : '<span class="result-badge unknown">—</span>';
             historyRows += `
                 <tr>
-                    <td>${h.date}</td>
+                    <td class="date-link" data-shortdate="${h.date}">${h.date}</td>
+                    <td>${badge}</td>
                     <td class="goals-cell">${h.goals}</td>
                     <td class="assists-cell">${h.assists}</td>
                     <td>${h.goals + h.assists}</td>
@@ -476,9 +625,14 @@ document.addEventListener('DOMContentLoaded', () => {
                      onerror="this.src='${fallbackImg(name)}'">
                 <div class="joueur-profile-info">
                     <h2>${name}</h2>
-                    <div class="joueur-profile-sub">${st.matches} match${st.matches > 1 ? 's' : ''} - ${seasonLabel}</div>
+                    <div class="joueur-profile-sub">${st.matches} match${st.matches > 1 ? 's' : ''} · ${seasonLabel}</div>
                 </div>
             </div>
+            ${formDotsHtml ? `
+            <div class="form-strip">
+                <span class="form-strip-label">Forme</span>
+                ${formDotsHtml}
+            </div>` : ''}
             <div class="joueur-stats-grid">
                 <div class="joueur-stat-card highlight">
                     <span class="val">${st.goals}</span>
@@ -496,6 +650,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="val">${st.ratio.toFixed(1)}</span>
                     <span class="lbl">Buts/Match</span>
                 </div>
+                <div class="joueur-stat-card result-win">
+                    <span class="val">${st.wins}</span>
+                    <span class="lbl">Victoires</span>
+                </div>
+                <div class="joueur-stat-card result-draw">
+                    <span class="val">${st.draws}</span>
+                    <span class="lbl">Nuls</span>
+                </div>
+                <div class="joueur-stat-card result-loss">
+                    <span class="val">${st.losses}</span>
+                    <span class="lbl">Défaites</span>
+                </div>
+                <div class="joueur-stat-card">
+                    <span class="val">${st.formRatio}%</span>
+                    <span class="lbl">Ratio V.</span>
+                </div>
             </div>
             ${history.length >= 1 ? `
             <div class="joueur-chart-section">
@@ -509,12 +679,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h4>Historique par match</h4>
                 <table class="history-table">
                     <thead>
-                        <tr><th>Date</th><th>Buts</th><th>Passes D.</th><th>G+A</th></tr>
+                        <tr><th>Date</th><th></th><th>Buts</th><th>Passes D.</th><th>G+A</th></tr>
                     </thead>
                     <tbody>${historyRows}</tbody>
                 </table>
             </div>` : ''}
         `;
+
+        // Listeners date → replay
+        panel.querySelectorAll('.date-link').forEach(el => {
+            el.addEventListener('click', () => navigateToReplay(el.dataset.shortdate));
+        });
 
         // Build chart after DOM is ready
         if (history.length >= 1) {
@@ -586,7 +761,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         label: 'Passes D.',
                         data: assistsData,
-                        hidden: true,
                         borderColor: '#339af0',
                         backgroundColor: gradAssists,
                         borderWidth: 2,

@@ -599,6 +599,31 @@ a {
     background: var(--bg-card-hover);
 }
 
+.player-line.player-link {
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: color var(--transition), background var(--transition);
+}
+
+.player-line.player-link:hover {
+    color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.06);
+}
+
+/* Hover coloré selon le résultat de l'équipe */
+.team-block.winner .player-line.player-link:hover {
+    color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.08);
+}
+.team-block.loser .player-line.player-link:hover {
+    color: var(--accent-red);
+    background: rgba(var(--accent-red-rgb), 0.07);
+}
+.team-block.draw .player-line.player-link:hover {
+    color: var(--text-secondary);
+    background: rgba(148, 163, 184, 0.08);
+}
+
 .team-score {
     font-family: 'Klapt', 'Barlow Condensed', sans-serif;
     font-size: 2.2rem;
@@ -1110,6 +1135,62 @@ a {
     color: var(--primary);
 }
 
+.joueur-stat-card.result-win  .val { color: var(--primary); }
+.joueur-stat-card.result-draw .val { color: var(--text-secondary); }
+.joueur-stat-card.result-loss .val { color: var(--accent-red); }
+
+/* Form Strip — 5 derniers matchs */
+.form-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-strip-label {
+    font-family: 'Klapt', 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-right: 4px;
+}
+
+.form-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+}
+
+.form-dot.win  { background: rgba(55, 178, 77, 0.14); color: var(--primary);        border: 1.5px solid rgba(55, 178, 77, 0.3); }
+.form-dot.draw { background: rgba(148,163,184, 0.10); color: var(--text-secondary);  border: 1.5px solid rgba(148,163,184, 0.22); }
+.form-dot.loss { background: rgba(224, 49, 49, 0.11); color: var(--accent-red);      border: 1.5px solid rgba(224, 49, 49, 0.25); }
+
+/* Result Badge — tableau historique */
+.result-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    font-family: 'Klapt', 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.result-badge.win     { background: rgba(55, 178, 77, 0.14); color: var(--primary); }
+.result-badge.draw    { background: rgba(148,163,184, 0.10); color: var(--text-secondary); }
+.result-badge.loss    { background: rgba(224, 49, 49, 0.11); color: var(--accent-red); }
+.result-badge.unknown { background: transparent; color: var(--text-muted); }
+
 /* Match History Table */
 .joueur-history {
     padding: 16px;
@@ -1165,6 +1246,18 @@ a {
 
 .history-table .goals-cell {
     color: var(--primary);
+}
+
+.history-table td.date-link {
+    cursor: pointer;
+    transition: color var(--transition);
+    font-family: 'Klapt', 'Barlow Condensed', sans-serif;
+}
+
+.history-table td.date-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .history-table .assists-cell {
