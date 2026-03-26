@@ -225,8 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Basculer sur l'onglet Replays
         navLinks.forEach(l => l.classList.remove('active'));
         sections.forEach(s => s.classList.remove('active'));
-        document.querySelector('[data-target="replays"]')?.classList.add('active');
-        document.getElementById('replays')?.classList.add('active');
+        document.querySelector('[data-target="replay"]')?.classList.add('active');
+        document.getElementById('replay')?.classList.add('active');
         if (window.innerWidth <= 768) sidebar.classList.remove('open');
 
         // Ne reconstruire que si l'item n'est pas dans le DOM actuel

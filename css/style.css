@@ -636,7 +636,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Klapt', 'Barlow Condensed', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-muted);

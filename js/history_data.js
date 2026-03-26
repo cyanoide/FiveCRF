@@ -1,9 +1,9 @@
 window.playerHistory = {
     "Abdel Karim": [
         { "date": "28/02", "goals": 4, "assists": 4 },
-        { "date": "06/05", "goals": 1, "assists": 3 },
-        { "date": "20/05", "goals": 1, "assists": 1 },
-        { "date": "27/05", "goals": 1, "assists": 2 },
+        { "date": "05/05", "goals": 1, "assists": 3 },
+        { "date": "19/05", "goals": 1, "assists": 1 },
+        { "date": "26/05", "goals": 1, "assists": 2 },
         { "date": "15/08", "goals": 2, "assists": 2 },
         { "date": "22/08", "goals": 4, "assists": 2 },
         { "date": "29/08", "goals": 3, "assists": 1 },
@@ -15,12 +15,12 @@ window.playerHistory = {
     ],
     "Constantin": [
         { "date": "28/02", "goals": 2, "assists": 2 },
-        { "date": "06/05", "goals": 4, "assists": 1 },
-        { "date": "14/05", "goals": 2, "assists": 0 },
-        { "date": "16/05", "goals": 1, "assists": 2 },
-        { "date": "20/05", "goals": 6, "assists": 1 },
-        { "date": "21/05", "goals": 0, "assists": 0 },
-        { "date": "23/05", "goals": 0, "assists": 1 },
+        { "date": "05/05", "goals": 4, "assists": 1 },
+        { "date": "13/05", "goals": 2, "assists": 0 },
+        { "date": "15/05", "goals": 1, "assists": 2 },
+        { "date": "19/05", "goals": 6, "assists": 1 },
+        { "date": "20/05", "goals": 0, "assists": 0 },
+        { "date": "22/05", "goals": 0, "assists": 1 },
         { "date": "06/06", "goals": 1, "assists": 0 },
         { "date": "15/08", "goals": 3, "assists": 0 },
         { "date": "22/08", "goals": 0, "assists": 2 },
@@ -46,9 +46,9 @@ window.playerHistory = {
     ],
     "Enos": [
         { "date": "28/02", "goals": 4, "assists": 2 },
-        { "date": "06/05", "goals": 2, "assists": 0 },
-        { "date": "20/05", "goals": 5, "assists": 1 },
-        { "date": "21/05", "goals": 2, "assists": 1 },
+        { "date": "05/05", "goals": 2, "assists": 0 },
+        { "date": "19/05", "goals": 5, "assists": 1 },
+        { "date": "20/05", "goals": 2, "assists": 1 },
         { "date": "09/10", "goals": 2, "assists": 0 },
         { "date": "25/11", "goals": 1, "assists": 0 },
         { "date": "18/03", "goals": 1, "assists": 0 }
@@ -56,9 +56,9 @@ window.playerHistory = {
     "Jesus": [
         { "date": "28/02", "goals": 1, "assists": 1 },
         { "date": "05/05", "goals": 0, "assists": 1 },
-        { "date": "14/05", "goals": 0, "assists": 1 },
-        { "date": "21/05", "goals": 2, "assists": 1 },
-        { "date": "23/05", "goals": 0, "assists": 1 },
+        { "date": "13/05", "goals": 0, "assists": 1 },
+        { "date": "20/05", "goals": 2, "assists": 1 },
+        { "date": "22/05", "goals": 0, "assists": 1 },
         { "date": "09/10", "goals": 1, "assists": 1 },
         { "date": "17/10", "goals": 1, "assists": 2 },
         { "date": "25/11", "goals": 3, "assists": 0 },
@@ -68,9 +68,9 @@ window.playerHistory = {
     ],
     "Anasse": [
         { "date": "28/02", "goals": 2, "assists": 0 },
-        { "date": "14/05", "goals": 0, "assists": 0 },
-        { "date": "16/05", "goals": 1, "assists": 1 },
-        { "date": "21/05", "goals": 1, "assists": 0 },
+        { "date": "13/05", "goals": 0, "assists": 0 },
+        { "date": "15/05", "goals": 1, "assists": 1 },
+        { "date": "20/05", "goals": 1, "assists": 0 },
         { "date": "26/09", "goals": 2, "assists": 0 },
         { "date": "09/10", "goals": 3, "assists": 0 },
         { "date": "24/10", "goals": 0, "assists": 1 },
@@ -91,7 +91,7 @@ window.playerHistory = {
     ],
     "Mahamat": [
         { "date": "28/02", "goals": 2, "assists": 2 },
-        { "date": "20/05", "goals": 3, "assists": 1 }
+        { "date": "19/05", "goals": 3, "assists": 1 }
     ],
     "Nabil": [
         { "date": "28/02", "goals": 3, "assists": 0 }
