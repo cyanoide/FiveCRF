@@ -15,7 +15,7 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=3.0">
+    <link rel="stylesheet" href="css/style.css?v=4.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -36,6 +36,14 @@
                 <a href="#" class="nav-link" data-target="joueurs">
                     <i class="fa-solid fa-shirt"></i>
                     <span>Joueurs</span>
+                </a>
+                <a href="#" class="nav-link" data-target="confrontations">
+                    <i class="fa-solid fa-people-arrows"></i>
+                    <span>Confrontations</span>
+                </a>
+                <a href="#" class="nav-link" data-target="stats">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span>Stats</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -113,13 +121,45 @@
                     </div>
                 </section>
 
+                <!-- CONFRONTATIONS PAGE -->
+                <section id="confrontations" class="page-view">
+                    <div class="page-header">
+                        <h1>Confrontations</h1>
+                        <div class="season-selector" id="confront-season-selector">
+                            <button class="season-btn" data-year="all">Toutes</button>
+                            <button class="season-btn active" data-year="2026">2026</button>
+                            <button class="season-btn" data-year="2025">2025</button>
+                        </div>
+                    </div>
+                    <div class="confrontation-selectors">
+                        <div class="confrontation-player-pick">
+                            <label>Joueur 1</label>
+                            <select id="confront-player-a"></select>
+                        </div>
+                        <div class="confront-vs">VS</div>
+                        <div class="confrontation-player-pick">
+                            <label>Joueur 2</label>
+                            <select id="confront-player-b"></select>
+                        </div>
+                    </div>
+                    <div id="confrontation-content"></div>
+                </section>
+
+                <!-- STATS PAGE -->
+                <section id="stats" class="page-view">
+                    <div class="page-header">
+                        <h1>Stats</h1>
+                    </div>
+                    <div id="stats-content"></div>
+                </section>
+
             </div>
         </main>
     </div>
 
-    <script src="js/replays_data.js?v=3.0"></script>
-    <script src="js/history_data.js?v=3.0"></script>
-    <script src="js/app.js?v=3.0"></script>
+    <script src="js/replays_data.js?v=4.0"></script>
+    <script src="js/history_data.js?v=4.0"></script>
+    <script src="js/app.js?v=4.0"></script>
 </body>
 
 </html>

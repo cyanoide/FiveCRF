@@ -16,6 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedPlayer = null;
 
     // =============================================
+    // NAME MATCHING — safe fuzzy match between
+    // history names and replay names.
+    // Rules: exact OR single-word-to-any (e.g. "Loic" ↔ "Loic Laguerre").
+    // Multi-word names require exact match to avoid
+    // confusing "Abdel Karim" with "Abdel Rafik".
+    // =============================================
+    function nameMatches(a, b) {
+        const aL = a.toLowerCase().trim();
+        const bL = b.toLowerCase().trim();
+        if (aL === bL) return true;
+        const aParts = aL.split(' ');
+        const bParts = bL.split(' ');
+        // Allow prefix only when one side is a single word
+        if (aParts.length === 1 && bParts[0] === aParts[0]) return true;
+        if (bParts.length === 1 && aParts[0] === bParts[0]) return true;
+        return false;
+    }
+
+    // =============================================
     // BUILD DATE -> YEAR MAP (from replays_data.js)
     // =============================================
     const dateYearMap = {};
@@ -66,6 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (window.innerWidth <= 768) sidebar.classList.remove('open');
             if (target === 'joueurs') buildJoueursList();
+            if (target === 'confrontations') initConfrontations();
+            if (target === 'stats') buildStatsPage();
         });
     });
 
@@ -180,14 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // NAVIGATION DEPUIS UN REPLAY → FICHE JOUEUR
     // =============================================
     function navigateToPlayer(playerName) {
-        // Trouver le nom exact dans history_data
-        const historyName = Object.keys(window.playerHistory || {}).find(k => {
-            const kL = k.toLowerCase().trim();
-            const pL = playerName.toLowerCase().trim();
-            return kL === pL ||
-                   kL.startsWith(pL.split(' ')[0]) ||
-                   pL.startsWith(kL.split(' ')[0]);
-        });
+        const historyName = Object.keys(window.playerHistory || {}).find(k => nameMatches(k, playerName));
         if (!historyName) return;
 
         // Basculer sur l'onglet Joueurs
@@ -283,11 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formatPlayers = (list) =>
                 (list || []).map(p => {
-                    const hasHistory = Object.keys(window.playerHistory || {}).some(k => {
-                        const kL = k.toLowerCase().trim();
-                        const pL = p.toLowerCase().trim();
-                        return kL === pL || kL.startsWith(pL.split(' ')[0]) || pL.startsWith(kL.split(' ')[0]);
-                    });
+                    const hasHistory = Object.keys(window.playerHistory || {}).some(k => nameMatches(k, p));
                     return hasHistory
                         ? `<div class="player-line player-link" data-player="${p}">${p}</div>`
                         : `<div class="player-line">${p}</div>`;
@@ -473,14 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const match = window.replays.find(m => m.date === fullDate);
         if (!match) return null;
 
-        const nameL = name.toLowerCase().trim();
         function inTeam(team) {
-            return (team || []).some(p => {
-                const pL = p.toLowerCase().trim();
-                return pL === nameL ||
-                       pL.startsWith(nameL.split(' ')[0]) ||
-                       nameL.startsWith(pL.split(' ')[0]);
-            });
+            return (team || []).some(p => nameMatches(p, name));
         }
         const inA = inTeam(match.teamA);
         const inB = inTeam(match.teamB);
@@ -660,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="joueur-stat-card result-loss">
                     <span class="val">${st.losses}</span>
-                    <span class="lbl">Défaites</span>
+                    <span class="lbl">Defaites</span>
                 </div>
                 <div class="joueur-stat-card">
                     <span class="val">${st.formRatio}%</span>
@@ -856,6 +860,542 @@ document.addEventListener('DOMContentLoaded', () => {
         playerChart.data.datasets[0].pointBorderColor = c.tooltipBg;
         playerChart.data.datasets[1].pointBorderColor = c.tooltipBg;
         playerChart.update('none');
+    }
+
+    // =============================================
+    // CONFRONTATIONS
+    // =============================================
+    let currentConfrontSeason = '2026';
+
+    // Season selector for confrontations
+    document.getElementById('confront-season-selector')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.season-btn');
+        if (!btn) return;
+        e.currentTarget.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentConfrontSeason = btn.dataset.year;
+        buildConfrontation();
+    });
+
+    function initConfrontations() {
+        const selA = document.getElementById('confront-player-a');
+        const selB = document.getElementById('confront-player-b');
+        if (!selA || !selB) return;
+
+        const names = Object.keys(window.playerHistory || {}).sort();
+        [selA, selB].forEach((sel, idx) => {
+            const prev = sel.value;
+            sel.innerHTML = '<option value="">Choisir...</option>' +
+                names.map(n => `<option value="${n}"${n === prev ? ' selected' : ''}>${n}</option>`).join('');
+            if (!prev && names.length > idx) {
+                sel.value = names[idx] || '';
+            }
+        });
+        selA.onchange = selB.onchange = () => buildConfrontation();
+        buildConfrontation();
+    }
+
+    function inTeamFuzzy(team, name) {
+        return (team || []).some(p => nameMatches(p, name));
+    }
+
+    function buildConfrontation() {
+        const nameA = document.getElementById('confront-player-a')?.value;
+        const nameB = document.getElementById('confront-player-b')?.value;
+        const container = document.getElementById('confrontation-content');
+        if (!container) return;
+        if (!nameA || !nameB || nameA === nameB) {
+            container.innerHTML = '<div class="no-data" style="padding:40px;text-align:center">Selectionne deux joueurs differents</div>';
+            return;
+        }
+
+        const yr = currentConfrontSeason;
+        const allStats = computePlayerStats(yr);
+        const empty = { matches: 0, goals: 0, assists: 0, ratio: 0, wins: 0, draws: 0, losses: 0, formRatio: 0 };
+        const stA = allStats[nameA] || empty;
+        const stB = allStats[nameB] || empty;
+
+        // Filter replays by season
+        const filteredReplays = filterReplaysByYear(yr);
+
+        // H2H & same team analysis
+        let h2hWinsA = 0, h2hWinsB = 0, h2hDraws = 0;
+        let sameTeamWins = 0, sameTeamLosses = 0, sameTeamDraws = 0, sameTeamTotal = 0;
+        let h2hTotal = 0;
+
+        filteredReplays.forEach(match => {
+            const aInA = inTeamFuzzy(match.teamA, nameA), aInB = inTeamFuzzy(match.teamB, nameA);
+            const bInA = inTeamFuzzy(match.teamA, nameB), bInB = inTeamFuzzy(match.teamB, nameB);
+            if (!(aInA || aInB) || !(bInA || bInB)) return;
+
+            const sA = parseInt(match.scoreA), sB = parseInt(match.scoreB);
+            const sameTeam = (aInA && bInA) || (aInB && bInB);
+
+            if (sameTeam) {
+                sameTeamTotal++;
+                const teamScore = aInA ? sA : sB;
+                const otherScore = aInA ? sB : sA;
+                if (teamScore > otherScore) sameTeamWins++;
+                else if (teamScore < otherScore) sameTeamLosses++;
+                else sameTeamDraws++;
+            } else {
+                h2hTotal++;
+                const aScore = aInA ? sA : sB;
+                const bScore = bInA ? sA : sB;
+                if (aScore > bScore) h2hWinsA++;
+                else if (bScore > aScore) h2hWinsB++;
+                else h2hDraws++;
+            }
+        });
+
+        function compBar(valA, valB, label, fmtA, fmtB) {
+            const max = Math.max(valA, valB, 1);
+            const pctA = (valA / max) * 100;
+            const pctB = (valB / max) * 100;
+            const winA = valA > valB ? ' bar-lead' : '';
+            const winB = valB > valA ? ' bar-lead' : '';
+            return `
+                <div class="comp-row">
+                    <span class="comp-val left${winA}">${fmtA ?? valA}</span>
+                    <div class="comp-bar-wrap">
+                        <div class="comp-bar left${winA}" style="width:${pctA}%"></div>
+                        <span class="comp-label">${label}</span>
+                        <div class="comp-bar right${winB}" style="width:${pctB}%"></div>
+                    </div>
+                    <span class="comp-val right${winB}">${fmtB ?? valB}</span>
+                </div>`;
+        }
+
+        // Ratio = (W + D*0.5) / total * 100
+        const sameTeamRatio = sameTeamTotal > 0 ? Math.round((sameTeamWins + sameTeamDraws * 0.5) / sameTeamTotal * 100) : 0;
+
+        container.innerHTML = `
+            <div class="confront-profiles">
+                <div class="confront-profile">
+                    <img src="${playerImg(nameA)}" alt="${nameA}" onerror="this.src='${fallbackImg(nameA)}'">
+                    <h3>${nameA}</h3>
+                </div>
+                <div class="confront-profile">
+                    <img src="${playerImg(nameB)}" alt="${nameB}" onerror="this.src='${fallbackImg(nameB)}'">
+                    <h3>${nameB}</h3>
+                </div>
+            </div>
+            <div class="confront-section">
+                <h4>Comparaison globale</h4>
+                <div class="comp-bars">
+                    ${compBar(stA.matches, stB.matches, 'Matchs')}
+                    ${compBar(stA.goals, stB.goals, 'Buts')}
+                    ${compBar(stA.assists, stB.assists, 'Passes D.')}
+                    ${compBar(stA.goals + stA.assists, stB.goals + stB.assists, 'G+A')}
+                    ${compBar(stA.ratio, stB.ratio, 'Buts/M', stA.ratio.toFixed(2), stB.ratio.toFixed(2))}
+                    ${compBar(stA.formRatio, stB.formRatio, 'Ratio V.', stA.formRatio + '%', stB.formRatio + '%')}
+                    ${compBar(stA.wins, stB.wins, 'Victoires')}
+                </div>
+            </div>
+            ${h2hTotal > 0 ? `
+            <div class="confront-section">
+                <h4>Face a face <span class="section-badge">${h2hTotal} match${h2hTotal > 1 ? 's' : ''}</span></h4>
+                <div class="h2h-summary">
+                    <div class="h2h-block ${h2hWinsA > h2hWinsB ? 'lead' : ''}">
+                        <span class="h2h-val">${h2hWinsA}</span>
+                        <span class="h2h-lbl">V. ${nameA.split(' ')[0]}</span>
+                    </div>
+                    <div class="h2h-block draw">
+                        <span class="h2h-val">${h2hDraws}</span>
+                        <span class="h2h-lbl">Nuls</span>
+                    </div>
+                    <div class="h2h-block ${h2hWinsB > h2hWinsA ? 'lead' : ''}">
+                        <span class="h2h-val">${h2hWinsB}</span>
+                        <span class="h2h-lbl">V. ${nameB.split(' ')[0]}</span>
+                    </div>
+                </div>
+            </div>` : ''}
+            ${sameTeamTotal > 0 ? `
+            <div class="confront-section">
+                <h4>Meme equipe <span class="section-badge">${sameTeamTotal} match${sameTeamTotal > 1 ? 's' : ''}</span></h4>
+                <div class="same-team-summary">
+                    <div class="same-team-stat win"><span class="st-val">${sameTeamWins}</span><span class="st-lbl">V</span></div>
+                    <div class="same-team-stat draw"><span class="st-val">${sameTeamDraws}</span><span class="st-lbl">N</span></div>
+                    <div class="same-team-stat loss"><span class="st-val">${sameTeamLosses}</span><span class="st-lbl">D</span></div>
+                    <div class="same-team-pct">${sameTeamRatio}% ratio de victoires ensemble</div>
+                </div>
+            </div>` : ''}
+            ${h2hTotal === 0 && sameTeamTotal === 0 ? '<div class="no-data" style="padding:20px;text-align:center">Ces joueurs n\'ont jamais joue dans le meme match</div>' : ''}
+        `;
+    }
+
+    // =============================================
+    // STATS PAGE — Records & Heatmap
+    // =============================================
+    function buildStatsPage() {
+        const container = document.getElementById('stats-content');
+        if (!container) return;
+
+        const replays = window.replays || [];
+        const history = window.playerHistory || {};
+
+        // ---- HEATMAP DATA ----
+        const heatmapHtml = buildWeeklyHeatmap(replays);
+
+        // ---- BEST DUOS (ratio = W*1 + D*0.5 / total) ----
+        const duoMap = {};
+        replays.forEach(match => {
+            const sA = parseInt(match.scoreA), sB = parseInt(match.scoreB);
+            [[match.teamA, sA, sB], [match.teamB, sB, sA]].forEach(([team, ts, os]) => {
+                if (!team) return;
+                for (let i = 0; i < team.length; i++) {
+                    for (let j = i + 1; j < team.length; j++) {
+                        const key = [team[i], team[j]].sort().join(' & ');
+                        if (!duoMap[key]) duoMap[key] = { played: 0, wins: 0, draws: 0 };
+                        duoMap[key].played++;
+                        if (ts > os) duoMap[key].wins++;
+                        else if (ts === os) duoMap[key].draws++;
+                    }
+                }
+            });
+        });
+        const bestDuos = Object.entries(duoMap)
+            .filter(([, v]) => v.played >= 3)
+            .map(([k, v]) => ({
+                duo: k, ...v,
+                ratio: Math.round((v.wins + v.draws * 0.5) / v.played * 100)
+            }))
+            .sort((a, b) => b.ratio - a.ratio || b.wins - a.wins || b.played - a.played)
+            .slice(0, 5);
+
+        // ---- TOP 5 BUTS EN 1 MATCH ----
+        const singleMatchGoals = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            entries.forEach(e => singleMatchGoals.push({ name, date: e.date, goals: e.goals }));
+        });
+        const top5Goals = singleMatchGoals.sort((a, b) => b.goals - a.goals).slice(0, 5);
+
+        // ---- TOP 5 PASSES DÉ EN 1 MATCH ----
+        const singleMatchAssists = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            entries.forEach(e => singleMatchAssists.push({ name, date: e.date, assists: e.assists }));
+        });
+        const top5Assists = singleMatchAssists.sort((a, b) => b.assists - a.assists).slice(0, 5);
+
+        // ---- TOP 5 G+A EN 1 MATCH ----
+        const singleMatchGA = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            entries.forEach(e => singleMatchGA.push({ name, date: e.date, ga: e.goals + e.assists }));
+        });
+        const top5GA = singleMatchGA.sort((a, b) => b.ga - a.ga).slice(0, 5);
+
+        // ---- TOP 5 WIN STREAKS ----
+        const streaks = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            let best = 0, cur = 0;
+            entries.forEach(e => {
+                const r = getMatchResult(name, e.date);
+                if (r === 'win') { cur++; if (cur > best) best = cur; }
+                else cur = 0;
+            });
+            if (best >= 2) streaks.push({ name, streak: best });
+        });
+        const topStreaks = streaks.sort((a, b) => b.streak - a.streak).slice(0, 5);
+
+        // ---- TOP 5 LOSS STREAKS ----
+        const lossStreaks = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            let worst = 0, cur = 0;
+            entries.forEach(e => {
+                const r = getMatchResult(name, e.date);
+                if (r === 'loss') { cur++; if (cur > worst) worst = cur; }
+                else cur = 0;
+            });
+            if (worst >= 2) lossStreaks.push({ name, streak: worst });
+        });
+        const topLossStreaks = lossStreaks.sort((a, b) => b.streak - a.streak).slice(0, 5);
+
+        // ---- BIGGEST WIN ----
+        let biggestWin = null;
+        replays.forEach(match => {
+            const diff = Math.abs(parseInt(match.scoreA) - parseInt(match.scoreB));
+            if (!biggestWin || diff > biggestWin.diff) {
+                biggestWin = { date: match.date, scoreA: match.scoreA, scoreB: match.scoreB, diff };
+            }
+        });
+
+        // ---- MOST GOALS MATCH ----
+        let mostGoalsMatch = null;
+        replays.forEach(match => {
+            const total = parseInt(match.scoreA) + parseInt(match.scoreB);
+            if (!mostGoalsMatch || total > mostGoalsMatch.total) {
+                mostGoalsMatch = { date: match.date, scoreA: match.scoreA, scoreB: match.scoreB, total };
+            }
+        });
+
+        // ---- TOP 5 PASSEURS (total assists) ----
+        const topPasseurs = Object.entries(history)
+            .map(([name, entries]) => ({
+                name,
+                assists: entries.reduce((s, e) => s + (e.assists || 0), 0),
+                matches: entries.length
+            }))
+            .filter(p => p.matches >= 2)
+            .sort((a, b) => b.assists - a.assists || b.matches - a.matches)
+            .slice(0, 5);
+
+        // ---- TOP 5 GA/MATCH (min 5 matchs) ----
+        const topGAperMatch = Object.entries(history)
+            .map(([name, entries]) => {
+                const ga = entries.reduce((s, e) => s + (e.goals || 0) + (e.assists || 0), 0);
+                return { name, ga, matches: entries.length, ratio: entries.length > 0 ? ga / entries.length : 0 };
+            })
+            .filter(p => p.matches >= 5)
+            .sort((a, b) => b.ratio - a.ratio || b.ga - a.ga)
+            .slice(0, 5);
+
+        // ---- GHOSTS (most matches at 0 goals) ----
+        const ghostPlayers = [];
+        Object.entries(history).forEach(([name, entries]) => {
+            const zeroGoals = entries.filter(e => e.goals === 0).length;
+            if (zeroGoals >= 2 && entries.length >= 3) {
+                ghostPlayers.push({ name, zero: zeroGoals, total: entries.length, pct: Math.round(zeroGoals / entries.length * 100) });
+            }
+        });
+        const topGhosts = ghostPlayers.sort((a, b) => b.pct - a.pct).slice(0, 5);
+
+        // Render
+        function medal(i) {
+            return ['🥇', '🥈', '🥉'][i] || `${i + 1}.`;
+        }
+
+        container.innerHTML = `
+            <div class="stats-section">
+                <h4>Calendrier des matchs</h4>
+                ${heatmapHtml}
+            </div>
+
+            <div class="stats-grid-2col">
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-handshake"></i> Meilleurs duos</h4>
+                    <div class="stats-list">
+                        ${bestDuos.map((d, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${d.duo}</span>
+                                <span class="stats-val">${d.ratio}% <small>(${d.wins}V ${d.draws}N/${d.played}m)</small></span>
+                            </div>`).join('') || '<div class="no-data">Pas assez de donnees</div>'}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-fire"></i> Meilleures series de victoires</h4>
+                    <div class="stats-list">
+                        ${topStreaks.map((s, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${s.name}</span>
+                                <span class="stats-val">${s.streak} matchs</span>
+                            </div>`).join('') || '<div class="no-data">Pas assez de donnees</div>'}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-regular fa-futbol"></i> Record buts en 1 match</h4>
+                    <div class="stats-list">
+                        ${top5Goals.map((g, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${g.name}</span>
+                                <span class="stats-val">${g.goals} buts <small>${g.date}</small></span>
+                            </div>`).join('')}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-hands-helping"></i> Record passes D. en 1 match</h4>
+                    <div class="stats-list">
+                        ${top5Assists.map((a, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${a.name}</span>
+                                <span class="stats-val">${a.assists} passes <small>${a.date}</small></span>
+                            </div>`).join('')}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-star"></i> Record G+A en 1 match</h4>
+                    <div class="stats-list">
+                        ${top5GA.map((g, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${g.name}</span>
+                                <span class="stats-val">${g.ga} G+A <small>${g.date}</small></span>
+                            </div>`).join('')}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-skull"></i> Pires series de defaites</h4>
+                    <div class="stats-list">
+                        ${topLossStreaks.map((s, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${s.name}</span>
+                                <span class="stats-val">${s.streak} matchs</span>
+                            </div>`).join('') || '<div class="no-data">Pas assez de donnees</div>'}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-bomb"></i> Plus gros ecart</h4>
+                    ${biggestWin ? `
+                    <div class="stats-highlight">
+                        <span class="stats-big-score">${biggestWin.scoreA} - ${biggestWin.scoreB}</span>
+                        <span class="stats-date">${biggestWin.date}</span>
+                        <span class="stats-sub">Ecart de ${biggestWin.diff} buts</span>
+                    </div>` : '<div class="no-data">—</div>'}
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-futbol"></i> Match le plus prolifique</h4>
+                    ${mostGoalsMatch ? `
+                    <div class="stats-highlight">
+                        <span class="stats-big-score">${mostGoalsMatch.scoreA} - ${mostGoalsMatch.scoreB}</span>
+                        <span class="stats-date">${mostGoalsMatch.date}</span>
+                        <span class="stats-sub">${mostGoalsMatch.total} buts au total</span>
+                    </div>` : '<div class="no-data">—</div>'}
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-ghost"></i> Fantomes (% matchs a 0 but)</h4>
+                    <div class="stats-list">
+                        ${topGhosts.map((g, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${g.name}</span>
+                                <span class="stats-val">${g.pct}% <small>(${g.zero}/${g.total})</small></span>
+                            </div>`).join('') || '<div class="no-data">—</div>'}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-shoe-prints"></i> Meilleurs passeurs (total)</h4>
+                    <div class="stats-list">
+                        ${topPasseurs.map((p, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${p.name}</span>
+                                <span class="stats-val">${p.assists} passes <small>(${p.matches}m)</small></span>
+                            </div>`).join('') || '<div class="no-data">—</div>'}
+                    </div>
+                </div>
+
+                <div class="stats-section stats-card">
+                    <h4><i class="fa-solid fa-bolt"></i> G+A par match (min. 5 matchs)</h4>
+                    <div class="stats-list">
+                        ${topGAperMatch.map((p, i) => `
+                            <div class="stats-list-row">
+                                <span class="stats-medal">${medal(i)}</span>
+                                <span class="stats-name">${p.name}</span>
+                                <span class="stats-val">${p.ratio.toFixed(2)} <small>(${p.ga} G+A/${p.matches}m)</small></span>
+                            </div>`).join('') || '<div class="no-data">Pas assez de donnees</div>'}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ---- HEATMAP: Weekly view — 52 cells per year, intensity = nb of matches that week ----
+    function buildWeeklyHeatmap(replays) {
+        if (!replays.length) return '<div class="no-data">Aucun match</div>';
+
+        // Count matches per ISO week
+        const weekMap = {};
+        replays.forEach(m => {
+            const d = parseDate(m.date);
+            const wk = getISOWeekKey(d);
+            if (!weekMap[wk]) weekMap[wk] = { count: 0, dates: [] };
+            weekMap[wk].count++;
+            weekMap[wk].dates.push(m.date);
+        });
+
+        // Get year range
+        const dates = replays.map(m => parseDate(m.date)).sort((a, b) => a - b);
+        const startYear = dates[0].getFullYear();
+        const endYear = dates[dates.length - 1].getFullYear();
+
+        const months = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        let yearsHtml = '';
+        for (let year = startYear; year <= endYear; year++) {
+            let weeksHtml = '';
+            let monthLabels = '';
+            let lastMonth = -1;
+
+            // Iterate all 52-53 weeks of the year
+            const jan1 = new Date(year, 0, 1);
+            const startSunday = new Date(jan1);
+            startSunday.setDate(jan1.getDate() - jan1.getDay());
+
+            let totalWeeks = 0;
+            // First pass: count weeks to compute percentage offsets
+            const weekData = [];
+            for (let w = 0; w < 53; w++) {
+                const weekStart = new Date(startSunday);
+                weekStart.setDate(startSunday.getDate() + w * 7);
+                if (weekStart.getFullYear() > year && w > 0) break;
+                weekData.push({ w, weekStart });
+                totalWeeks = w + 1;
+            }
+
+            weekData.forEach(({ w, weekStart }) => {
+                const wk = getISOWeekKey(weekStart);
+                const data = weekMap[wk];
+                let cls = 'heatmap-cell';
+                let tooltip = '';
+                if (data) {
+                    const level = Math.min(data.count, 4);
+                    cls = `heatmap-cell match level-${level}`;
+                    tooltip = `Semaine ${w + 1} ${year} — ${data.count} match${data.count > 1 ? 's' : ''}`;
+                }
+                weeksHtml += `<div class="${cls}" ${tooltip ? `title="${tooltip}"` : ''}></div>`;
+
+                // Month labels using percentage position
+                const mid = new Date(weekStart);
+                mid.setDate(mid.getDate() + 3);
+                if (mid.getMonth() !== lastMonth && mid.getFullYear() === year) {
+                    const pct = (w / totalWeeks * 100).toFixed(1);
+                    monthLabels += `<span class="heatmap-month" style="left:${pct}%">${months[mid.getMonth()]}</span>`;
+                    lastMonth = mid.getMonth();
+                }
+            });
+
+            yearsHtml += `
+                <div class="heatmap-year-row">
+                    <span class="heatmap-year-label">${year}</span>
+                    <div class="heatmap-year-col">
+                        <div class="heatmap-months" style="--hm-weeks:${totalWeeks}">${monthLabels}</div>
+                        <div class="heatmap-weeks" style="grid-template-columns:repeat(${totalWeeks},1fr)">${weeksHtml}</div>
+                    </div>
+                </div>`;
+        }
+
+        return `
+            <div class="heatmap-container">
+                ${yearsHtml}
+                <div class="heatmap-legend">
+                    <span>Aucun</span>
+                    <div class="heatmap-cell empty"></div>
+                    <div class="heatmap-cell match level-1"></div>
+                    <div class="heatmap-cell match level-2"></div>
+                    <div class="heatmap-cell match level-3"></div>
+                    <div class="heatmap-cell match level-4"></div>
+                    <span>4+ matchs</span>
+                </div>
+            </div>`;
+    }
+
+    function getISOWeekKey(d) {
+        const date = new Date(d);
+        date.setDate(date.getDate() - date.getDay());
+        return `${date.getFullYear()}-W${String(Math.ceil((((date - new Date(date.getFullYear(), 0, 1)) / 86400000) + 1) / 7)).padStart(2, '0')}`;
     }
 
     // =============================================
