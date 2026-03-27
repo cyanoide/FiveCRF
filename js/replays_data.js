@@ -810,7 +810,7 @@ window.replays = [
             "Seyed",
             "Stephane"
         ],
-        "scoreB": 5,
+        "scoreB": 7,
         "link": "https://drive.google.com/drive/folders/1vwOg3V_1XbjXlAzYXMj93sC_4PtYTVX4?usp=drive_link",
         "timeline": [
             { "minute": "3", "scorer": "Joseph", "score": "1-0" },
