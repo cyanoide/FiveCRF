@@ -1683,5 +1683,54 @@ window.replays = [
             { "minute": "55", "scorer": "Youssef", "score": "13-6" },
             { "minute": "56", "scorer": "Kevin", "score": "14-6" }
         ]
+    },{
+        "date": "01/04/2026",
+        "teamA": [
+            "Mahdi",
+            "Constantin",
+            "Loic Robin",
+            "Joyce",
+            "Youssef"
+        ],
+        "scoreA": 16,
+        "teamB": [
+            "Romain",
+            "Kerim",
+            "Slimane",
+            "Lamine",
+            "Briac"
+        ],
+        "scoreB": 14,
+        "link": "https://drive.google.com/drive/folders/1Fhu77FRJg61itRiUvUk8V11KNKXMq6Zy?usp=drive_link",
+        "timeline": [
+            { "minute": "6", "scorer": "Joyce", "score": "1-0" },
+            { "minute": "8", "scorer": "Mahdi", "score": "2-0" },
+            { "minute": "10", "scorer": "Mahdi", "score": "3-0" },
+            { "minute": "11", "scorer": "Lamine", "score": "3-1" },
+            { "minute": "13", "scorer": "Briac", "score": "3-2" },
+            { "minute": "15", "scorer": "Kerim", "score": "3-3" },
+            { "minute": "16", "scorer": "Lamine", "score": "3-4" },
+            { "minute": "17", "scorer": "Kerim", "score": "3-5" },
+            { "minute": "20", "scorer": "Joyce", "score": "4-5" },
+            { "minute": "21", "scorer": "Briac", "score": "4-6" },
+            { "minute": "27", "scorer": "Youssef", "score": "5-6" },
+            { "minute": "29", "scorer": "Constantin", "score": "6-6" },
+            { "minute": "31", "scorer": "Loic Robin", "score": "7-6" },
+            { "minute": "32", "scorer": "Youssef", "score": "8-6" },
+            { "minute": "33", "scorer": "Joyce", "score": "9-6" },
+            { "minute": "34", "scorer": "Romain", "score": "9-7" },
+            { "minute": "36", "scorer": "Mahdi", "score": "10-7" },
+            { "minute": "37", "scorer": "Joyce", "score": "11-7" },
+            { "minute": "41", "scorer": "Lamine", "score": "11-8" },
+            { "minute": "42", "scorer": "Lamine", "score": "11-9" },
+            { "minute": "46", "scorer": "Briac", "score": "11-10" },
+            { "minute": "47", "scorer": "Lamine", "score": "11-11" },
+            { "minute": "47", "scorer": "Joyce", "score": "12-11" },
+            { "minute": "48", "scorer": "Mahdi", "score": "13-11" },
+            { "minute": "50", "scorer": "Romain", "score": "13-12" },
+            { "minute": "53", "scorer": "Mahdi", "score": "14-12" },
+            { "minute": "54", "scorer": "Kerim", "score": "14-13" },
+            { "minute": "55", "scorer": "Joyce", "score": "15-13" }
+        ]
     }
 ];
