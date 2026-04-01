@@ -1683,7 +1683,8 @@ window.replays = [
             { "minute": "55", "scorer": "Youssef", "score": "13-6" },
             { "minute": "56", "scorer": "Kevin", "score": "14-6" }
         ]
-    },{
+    },
+    {
         "date": "01/04/2026",
         "teamA": [
             "Mahdi",
