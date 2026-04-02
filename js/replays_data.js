@@ -1038,7 +1038,7 @@ window.replays = [
         "teamA": [
             "Enos",
             "Constantin",
-            "Mohamed",
+            "Mohamed Mkaouar",
             "Lamine",
             "Jesus"
         ],
@@ -1057,7 +1057,7 @@ window.replays = [
             { "minute": "5", "scorer": "Enos", "score": "1-1" },
             { "minute": "7", "scorer": "Constantin", "score": "2-1" },
             { "minute": "7", "scorer": "Enos", "score": "3-1" },
-            { "minute": "13", "scorer": "Mohamed Aboulgaiz", "score": "4-1" },
+            { "minute": "13", "scorer": "Mohamed Mkaouar", "score": "4-1" },
             { "minute": "16", "scorer": "Loic Laguerre", "score": "4-2" },
             { "minute": "22", "scorer": "Constantin", "score": "5-2" },
             { "minute": "23", "scorer": "Loic Laguerre", "score": "5-3" },
@@ -1503,7 +1503,7 @@ window.replays = [
             "Driss",
             "Anasse",
             "Youssef",
-            "Mohamed",
+            "Mohamed Mkaouar",
             "Aniss"
         ],
         "scoreB": 7,
@@ -1569,7 +1569,7 @@ window.replays = [
     ,
     {
         "date": "18/03/2026",
-        "teamA": ["Constantin", "Abdel Karim", "Driss", "Joyce", "Mohamed"],
+        "teamA": ["Constantin", "Abdel Karim", "Driss", "Joyce", "Mohamed Aboulgaiz"],
         "scoreA": 10,
         "teamB": ["Fabrice", "Anasse", "Enos", "Briac", "Maxime"],
         "scoreB": 6,
@@ -1577,7 +1577,7 @@ window.replays = [
         "timeline": [
             { "minute": "9", "scorer": "Karim", "score": "1-0" },
             { "minute": "18", "scorer": "Joyce", "score": "2-0" },
-            { "minute": "19", "scorer": "Mohamed", "score": "3-0" },
+            { "minute": "19", "scorer": "Mohamed Aboulgaiz", "score": "3-0" },
             { "minute": "21", "scorer": "Constantin", "score": "4-0" },
             { "minute": "21", "scorer": "Enos", "score": "4-1" },
             { "minute": "30", "scorer": "Constantin", "score": "5-1" },
