@@ -754,7 +754,7 @@ window.replays = [
             "Enos",
             "Jesus",
             "Loic Laguerre",
-            "Mohamed Mkaouar"
+            "Mohamed Aboulgaiz"
         ],
         "scoreA": 10,
         "teamB": [
@@ -776,14 +776,14 @@ window.replays = [
             { "minute": "18", "scorer": "Anasse", "score": "3-4" },
             { "minute": "19", "scorer": "Lamine", "score": "3-5" },
             { "minute": "22", "scorer": "Jesus", "score": "4-5" },
-            { "minute": "24", "scorer": "Mohamed Mkaouar", "score": "5-5" },
+            { "minute": "24", "scorer": "Mohamed Aboulgaiz", "score": "5-5" },
             { "minute": "25", "scorer": "Driss", "score": "5-6" },
             { "minute": "26", "scorer": "Enos", "score": "6-6" },
             { "minute": "29", "scorer": "Loic Laguerre", "score": "7-6" },
             { "minute": "34", "scorer": "Lamine", "score": "7-7" },
             { "minute": "36", "scorer": "Anasse", "score": "7-8" },
             { "minute": "40", "scorer": "Aniss", "score": "7-9" },
-            { "minute": "41", "scorer": "Mohamed Mkaouar", "score": "8-9" },
+            { "minute": "41", "scorer": "Mohamed Aboulgaiz", "score": "8-9" },
             { "minute": "41", "scorer": "Anasse", "score": "8-10" },
             { "minute": "43", "scorer": "Florent", "score": "8-11" },
             { "minute": "44", "scorer": "Loic Laguerre", "score": "9-11" },
@@ -1038,7 +1038,7 @@ window.replays = [
         "teamA": [
             "Enos",
             "Constantin",
-            "Mohamed Mkaouar",
+            "Mohamed Aboulgaiz",
             "Lamine",
             "Jesus"
         ],
@@ -1057,7 +1057,7 @@ window.replays = [
             { "minute": "5", "scorer": "Enos", "score": "1-1" },
             { "minute": "7", "scorer": "Constantin", "score": "2-1" },
             { "minute": "7", "scorer": "Enos", "score": "3-1" },
-            { "minute": "13", "scorer": "Mohamed Mkaouar", "score": "4-1" },
+            { "minute": "13", "scorer": "Mohamed Aboulgaiz", "score": "4-1" },
             { "minute": "16", "scorer": "Loic Laguerre", "score": "4-2" },
             { "minute": "22", "scorer": "Constantin", "score": "5-2" },
             { "minute": "23", "scorer": "Loic Laguerre", "score": "5-3" },
@@ -1569,7 +1569,7 @@ window.replays = [
     ,
     {
         "date": "18/03/2026",
-        "teamA": ["Constantin", "Abdel Karim", "Driss", "Joyce", "Mohamed Aboulgaiz"],
+        "teamA": ["Constantin", "Abdel Karim", "Driss", "Joyce", "Mohamed Mkaouar"],
         "scoreA": 10,
         "teamB": ["Fabrice", "Anasse", "Enos", "Briac", "Maxime"],
         "scoreB": 6,
@@ -1577,7 +1577,7 @@ window.replays = [
         "timeline": [
             { "minute": "9", "scorer": "Karim", "score": "1-0" },
             { "minute": "18", "scorer": "Joyce", "score": "2-0" },
-            { "minute": "19", "scorer": "Mohamed Aboulgaiz", "score": "3-0" },
+            { "minute": "19", "scorer": "Mohamed Mkaouar", "score": "3-0" },
             { "minute": "21", "scorer": "Constantin", "score": "4-0" },
             { "minute": "21", "scorer": "Enos", "score": "4-1" },
             { "minute": "30", "scorer": "Constantin", "score": "5-1" },
