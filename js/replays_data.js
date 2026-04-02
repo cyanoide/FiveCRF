@@ -754,7 +754,7 @@ window.replays = [
             "Enos",
             "Jesus",
             "Loic Laguerre",
-            "Mohamed"
+            "Mohamed Mkaouar"
         ],
         "scoreA": 10,
         "teamB": [
@@ -776,14 +776,14 @@ window.replays = [
             { "minute": "18", "scorer": "Anasse", "score": "3-4" },
             { "minute": "19", "scorer": "Lamine", "score": "3-5" },
             { "minute": "22", "scorer": "Jesus", "score": "4-5" },
-            { "minute": "24", "scorer": "Mohamed", "score": "5-5" },
+            { "minute": "24", "scorer": "Mohamed Mkaouar", "score": "5-5" },
             { "minute": "25", "scorer": "Driss", "score": "5-6" },
             { "minute": "26", "scorer": "Enos", "score": "6-6" },
             { "minute": "29", "scorer": "Loic Laguerre", "score": "7-6" },
             { "minute": "34", "scorer": "Lamine", "score": "7-7" },
             { "minute": "36", "scorer": "Anasse", "score": "7-8" },
             { "minute": "40", "scorer": "Aniss", "score": "7-9" },
-            { "minute": "41", "scorer": "Mohamed", "score": "8-9" },
+            { "minute": "41", "scorer": "Mohamed Mkaouar", "score": "8-9" },
             { "minute": "41", "scorer": "Anasse", "score": "8-10" },
             { "minute": "43", "scorer": "Florent", "score": "8-11" },
             { "minute": "44", "scorer": "Loic Laguerre", "score": "9-11" },
